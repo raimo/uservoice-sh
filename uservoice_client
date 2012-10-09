@@ -1,4 +1,3 @@
 #!/bin/sh
 
-cd `dirname $0`
-bundle exec ruby uservoice_client.rb $*
+(cd `dirname $0`; bundle exec ruby uservoice_client.rb $* )

@@ -20,12 +20,16 @@ begin
   access_token = nil
 
   method, path, json_string = ARGV
-  raise "Bad HTTP verb #{method}" unless %w(get put post delete).include?(method)
+  raise "Bad HTTP verb #{method}" unless %w(get_collection get put post delete).include?(method)
   raise "Bad path #{path}" unless path && path =~ /^\//
 
   access_token = client.login_with_access_token(config['access_token'], config['access_token_secret']) if config['access_token'] && config['access_token_secret']
 
-  p (access_token || client).request(method, path, (JSON.parse(json_string) rescue nil))
+  if method.to_s == 'get_collection'
+    p (access_token || client).get_collection(path).each{}
+  else
+    p (access_token || client).request(method, path, (JSON.parse(json_string) rescue nil))
+  end
 rescue UserVoice::Unauthorized => e
   if e.to_s =~ /No user/
     puts "You are making requests as no user. Request an access token."
