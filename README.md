@@ -24,9 +24,9 @@ Usage
 # Type the email of the user whose access token you want (default: owner):
 
 ./uservoice_client get_collection '/api/v1/suggestions'
-# Returns all the suggestions
+# Prints all the suggestions
 
 ./uservoice_client sso_url '{"email": "user@example.com", "trusted": true }'
-# Return login url for user@example.com
+# Prints login url for user@example.com
 ```
 

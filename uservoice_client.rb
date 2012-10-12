@@ -70,6 +70,6 @@ rescue Errno::ENOENT, InvalidConfig
   puts "subdomain_name: uservoice-subdomain"
   puts "api_key: YOUR-API-KEY-ADMIN-CONS"
   puts "api_secret: YOUR-API-SECRET-FROM-ADMIN-CONSOLE-HERE--"
-  puts "sso_key: YOUR-SSO-KEY-FOR-SSO-LOGINS
+  puts "sso_key: YOUR-SSO-KEY-FOR-SSO-LOGINS"
 end
 
