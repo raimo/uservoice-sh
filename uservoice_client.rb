@@ -19,16 +19,29 @@ begin
   client = UserVoice::Client.new(config['subdomain_name'], config['api_key'], config['api_secret'])
   access_token = nil
 
-  method, path, json_string = ARGV
-  raise "Bad HTTP verb #{method}" unless %w(get_collection get put post delete).include?(method)
-  raise "Bad path #{path}" unless path && path =~ /^\//
 
-  access_token = client.login_with_access_token(config['access_token'], config['access_token_secret']) if config['access_token'] && config['access_token_secret']
-
-  if method.to_s == 'get_collection'
-    p (access_token || client).get_collection(path).each{}
-  else
-    p (access_token || client).request(method, path, (JSON.parse(json_string) rescue nil))
+  begin
+    method = ARGV.shift
+    if %w(get put post delete).include?(method.to_s)
+      path = ARGV.shift
+      raise "Bad path \"#{path}\"" unless path && path =~ /^\//
+      json_string = ARGV.join
+      access_token = client.login_with_access_token(config['access_token'], config['access_token_secret']) if config['access_token'] && config['access_token_secret']
+      p (access_token || client).request(method, path, (json_string.length > 0 ? JSON.parse(json_string) : '') )
+    elsif %(get_collection).include?(method.to_s)
+      path = ARGV.shift
+      raise "Bad path \"#{path}\"" unless path && path =~ /^\//
+      access_token = client.login_with_access_token(config['access_token'], config['access_token_secret']) if config['access_token'] && config['access_token_secret']
+      p (access_token || client).get_collection(path).each{}
+    elsif method.to_s == 'sso_token'
+      json_string = ARGV.join
+      puts UserVoice.generate_sso_token(config['subdomain_name'], config['sso_key'], (json_string.length > 0 ? JSON.parse(json_string) : ''))
+    elsif method.to_s == 'sso_url'
+      json_string = ARGV.join
+      puts "http://#{config['subdomain_name']}.uservoice.com?sso=#{UserVoice.generate_sso_token(config['subdomain_name'], config['sso_key'], JSON.parse(json_string))}"
+    else
+      raise "Bad command \"#{method}\"."
+    end
   end
 rescue UserVoice::Unauthorized => e
   if e.to_s =~ /No user/
@@ -57,5 +70,6 @@ rescue Errno::ENOENT, InvalidConfig
   puts "subdomain_name: uservoice-subdomain"
   puts "api_key: YOUR-API-KEY-ADMIN-CONS"
   puts "api_secret: YOUR-API-SECRET-FROM-ADMIN-CONSOLE-HERE--"
+  puts "sso_key: YOUR-SSO-KEY-FOR-SSO-LOGINS
 end
 

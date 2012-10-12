@@ -25,5 +25,8 @@ Usage
 
 ./uservoice_client get_collection '/api/v1/suggestions'
 # Returns all the suggestions
+
+./uservoice_client sso_url '{"email": "user@example.com", "trusted": true }'
+# Return login url for user@example.com
 ```
 
