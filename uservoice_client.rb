@@ -49,7 +49,7 @@ begin
   end
 rescue JSON::ParserError, UserVoice::NotFound
   $stderr.puts "Resource Not Found"
-  exit 1
+  exit 404
 rescue UserVoice::Unauthorized => e
   if e.to_s =~ /No user/
     $stderr.puts "You are making requests as no user. Request an access token."
@@ -57,26 +57,38 @@ rescue UserVoice::Unauthorized => e
     email = STDIN.gets.to_s.strip
     if access_token = case email
                       when EMAIL_FORMAT
-                        puts "Ok, generating access token for #{email}."
+                        $stderr.puts "Ok, generating access token for #{email}."
                         client.login_as(email)
                       when nil, '', 'owner'
-                        puts "Ok, generating access token for the subdomain owner. Be careful!"
+                        $stderr.puts "Ok, generating access token for the subdomain owner. Be careful!"
                         client.login_as_owner
                       else
-                        puts "Invalid email address, try again"
+                        $stderr.puts "Invalid email address, try again"
                       end
-      $stderr.puts "Perfect! Now add these two lines to your $HOME/.uservoice.rc:"
+      if $stdout.tty?
+        $stderr.puts "Perfect! Now add these two lines to your $HOME/.uservoice.rc:"
+      else
+        $stderr.puts "Perfect! Wrote the tokens to stdout."
+      end
       puts "access_token: #{access_token.token}"
       puts "access_token_secret: #{access_token.secret}"
+    else
+      exit 500
     end
   else
     puts e.to_s
+    exit 403
   end
-rescue Errno::ENOENT, InvalidConfig
-  $stderr.puts "A template of .uservoicerc in your home directory:"
+rescue Errno::ENOENT, InvalidConfig, TypeError
+  if $stdout.tty?
+    $stderr.puts "A template of .uservoicerc in your home directory:"
+  else
+    $stderr.puts "Wrote the template of .uservoicerc into stdout."
+  end
   puts "subdomain_name: uservoice-subdomain"
   puts "api_key: YOUR-API-KEY-ADMIN-CONS"
   puts "api_secret: YOUR-API-SECRET-FROM-ADMIN-CONSOLE-HERE--"
   puts "sso_key: YOUR-SSO-KEY-FOR-SSO-LOGINS"
+  exit 403
 end
 
