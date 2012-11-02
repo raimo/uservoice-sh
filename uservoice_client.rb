@@ -47,10 +47,13 @@ begin
       raise "Bad command \"#{method}\"."
     end
   end
+rescue JSON::ParserError, UserVoice::NotFound
+  $stderr.puts "Resource Not Found"
+  exit 1
 rescue UserVoice::Unauthorized => e
   if e.to_s =~ /No user/
-    puts "You are making requests as no user. Request an access token."
-    puts "Type the email of the user whose access token you want (default: owner):"
+    $stderr.puts "You are making requests as no user. Request an access token."
+    $stderr.puts "Type the email of the user whose access token you want (default: owner):"
     email = STDIN.gets.to_s.strip
     if access_token = case email
                       when EMAIL_FORMAT
@@ -62,7 +65,7 @@ rescue UserVoice::Unauthorized => e
                       else
                         puts "Invalid email address, try again"
                       end
-      puts "Perfect! Now add these two lines to your $HOME/.uservoice.rc:"
+      $stderr.puts "Perfect! Now add these two lines to your $HOME/.uservoice.rc:"
       puts "access_token: #{access_token.token}"
       puts "access_token_secret: #{access_token.secret}"
     end
@@ -70,7 +73,7 @@ rescue UserVoice::Unauthorized => e
     puts e.to_s
   end
 rescue Errno::ENOENT, InvalidConfig
-  puts "A template of .uservoicerc in your home directory:"
+  $stderr.puts "A template of .uservoicerc in your home directory:"
   puts "subdomain_name: uservoice-subdomain"
   puts "api_key: YOUR-API-KEY-ADMIN-CONS"
   puts "api_secret: YOUR-API-SECRET-FROM-ADMIN-CONSOLE-HERE--"
