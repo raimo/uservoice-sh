@@ -32,7 +32,7 @@ $ uservoice_client get_collection '/api/v1/users'
 Bootstrap setup:
 
 ```bash
-$ uservoice_client get_collection '/api/v1/users' > $HOME > .uservoicerc
+$ uservoice_client get_collection '/api/v1/users' > $HOME/.uservoicerc
 ```
 
 Now open editor and place your Admin Console setup into .uservoicerc.
