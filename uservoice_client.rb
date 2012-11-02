@@ -29,13 +29,13 @@ begin
       raise "Bad path \"#{path}\"" unless path && path =~ /^\//
       json_string = ARGV.join
       access_token = client.login_with_access_token(config['access_token'], config['access_token_secret']) if config['access_token'] && config['access_token_secret']
-      p (access_token || client).request(method, path, (json_string.length > 0 ? JSON.parse(json_string) : '') )
+      puts (access_token || client).request(method, path, (json_string.length > 0 ? JSON.parse(json_string) : '') ).to_json
     elsif %(get_collection).include?(method.to_s)
       path = ARGV.shift
       raise "Bad path \"#{path}\"" unless path && path =~ /^\//
       access_token = client.login_with_access_token(config['access_token'], config['access_token_secret']) if config['access_token'] && config['access_token_secret']
       collection = (access_token || client).get_collection(path)
-      p collection.each{}
+      puts collection.each{}.to_json
       $stderr.puts "Total: #{collection.size}"
     elsif method.to_s == 'sso_token'
       json_string = ARGV.join
