@@ -33,6 +33,7 @@ Bootstrap setup:
 
 ```bash
 $ uservoice_client get_collection '/api/v1/users' > $HOME/.uservoicerc
+# => Wrote the template of .uservoicerc into stdout.
 ```
 
 Now open editor and place your Admin Console setup into .uservoicerc.
