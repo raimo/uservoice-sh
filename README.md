@@ -37,7 +37,13 @@ $ uservoice_client get_collection '/api/v1/users' > $HOME/.uservoicerc
 
 Now open editor and place your Admin Console setup into .uservoicerc.
 
-Then let's try to do authenticated 2-legged request:
+```bash
+uservoice_client get_collection '/api/v1/users'
+# => [{"url":"http://uservoice-subdomain.uservoice.com/users/....
+# => Total: 75
+```
+
+That worked! Then let's try to do authenticated 2-legged request:
 
 ```bash
 $ uservoice_client get '/api/v1/users/current'
@@ -65,17 +71,17 @@ All done!
 
 ```bash
 $ uservoice_client get_collection '/api/v1/suggestions'
-# => [{"url":"http://feedback.uservoice.com/forums/....},{....}]
+# => [{"url":"http://uservoice-subdomain.uservoice.com/forums/....},{....}]
 # => Total: 63
 ```
 
-Again, redirect the output to a file suggestions.json and you will get the JSON without the "Total: 63".
+Awesome! Again, you may redirect the output to a file suggestions.json and you will get the JSON without the "Total: 63".
 
 Generate a link for an SSO user:
 
 ```bash
 $ uservoice_client sso_url '{"email": "user@example.com", "trusted": true }'
-# => http://feedback.uservoice.com/login_success?sso=SDF%SDF...
+# => http://uservoice-subdomain.uservoice.com/login_success?sso=SDF%SDF...
 ```
 
 Any feedback on uservoice-sh is welcome!
