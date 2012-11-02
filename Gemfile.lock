@@ -4,7 +4,7 @@ GEM
     ezcrypto (0.7.2)
     json (1.7.5)
     oauth (0.4.7)
-    uservoice-ruby (0.0.8)
+    uservoice-ruby (0.0.9)
       ezcrypto (>= 0.7.2)
       json (>= 1.7.5)
       oauth (>= 0.4.7)
