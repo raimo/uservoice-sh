@@ -52,7 +52,7 @@ $ uservoice_client get '/api/v1/users/current'
 # => Type the email of the user whose access token you want (default: owner):
 # me@example.com
 # => Ok, generating access token for me@example.com.
-# => Perfect! Now add these two lines to your $HOME/.uservoice.rc:
+# => Perfect! Now add these two lines to your $HOME/.uservoice.rc or rerun this command with >> $HOME/.uservoicerc:
 # => access_token: qlex1IhzK5qyFLGf3KwpHv
 # => access_token_secret: vrfpo7Zoe5AQ8w3PqCuySeTTn4Dn3osIbDuOrtyCD
 ```
@@ -65,7 +65,7 @@ $ uservoice_client get '/api/v1/users/current' >> $HOME/.uservoicerc
 # => Type the email of the user whose access token you want (default: owner):
 me@example.com
 # => Ok, generating access token for me@example.com.
-# => Perfect! Now add these two lines to your $HOME/.uservoice.rc:
+# => Perfect! Wrote the tokens to stdout.
 ```
 
 All done!
