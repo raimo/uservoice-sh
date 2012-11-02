@@ -18,17 +18,66 @@ make install
 
 Usage
 -----
-```bash
-./uservoice_client get '/api/v1/users/current'
-# Prints:
-# You are making requests as no user. Request an access token.
-# Type the email of the user whose access token you want (default: owner):
 
-./uservoice_client get_collection '/api/v1/suggestions'
+Try running to ensure installation was ok:
+```bash
+$ uservoice_client get_collection '/api/v1/users'
+# => A template of .uservoicerc in your home directory:
+# => subdomain_name: uservoice-subdomain
+# => api_key: YOUR-API-KEY-ADMIN-CONS
+# => api_secret: YOUR-API-SECRET-FROM-ADMIN-CONSOLE-HERE--
+# => sso_key: YOUR-SSO-KEY-FOR-SSO-LOGINS
+```
+
+Bootstrap setup:
+
+```bash
+$ uservoice_client get_collection '/api/v1/users' > $HOME > .uservoicerc
+```
+
+Now open editor and place your Admin Console setup into .uservoicerc.
+
+Then let's try to do authenticated 2-legged request:
+
+```bash
+$ uservoice_client get '/api/v1/users/current'
+# => You are making requests as no user. Request an access token.
+# => Type the email of the user whose access token you want (default: owner):
+# me@example.com
+# => Ok, generating access token for me@example.com.
+# => Perfect! Now add these two lines to your $HOME/.uservoice.rc:
+# => access_token: qlex1IhzK5qyFLGf3KwpHv
+# => access_token_secret: vrfpo7Zoe5AQ8w3PqCuySeTTn4Dn3osIbDuOrtyCD
+```
+
+Seems cool, you can just copy those to .uservoicerc. Or you can be lazy and redirect output directly:
+
+```bash
+$ uservoice_client get '/api/v1/users/current' >> $HOME/.uservoicerc
+# => You are making requests as no user. Request an access token.
+# => Type the email of the user whose access token you want (default: owner):
+me@example.com
+# => Ok, generating access token for me@example.com.
+# => Perfect! Now add these two lines to your $HOME/.uservoice.rc:
+```
+
+All done!
+
+```bash
+$ uservoice_client get_collection '/api/v1/suggestions'
 # => [{"url":"http://feedback.uservoice.com/forums/....},{....}]
 # => Total: 63
+```
 
-./uservoice_client sso_url '{"email": "user@example.com", "trusted": true }'
+Again, redirect the output to a file suggestions.json and you will get the JSON without the "Total: 63".
+
+Generate a link for an SSO user:
+
+```bash
+$ uservoice_client sso_url '{"email": "user@example.com", "trusted": true }'
 # => http://feedback.uservoice.com/login_success?sso=SDF%SDF...
 ```
 
+Any feedback on uservoice-sh is welcome!
+
+/Raimo, @raimo_t
