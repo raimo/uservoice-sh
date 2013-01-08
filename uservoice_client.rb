@@ -66,7 +66,7 @@ rescue UserVoice::Unauthorized => e
                         $stderr.puts "Invalid email address, try again"
                       end
       if $stdout.tty?
-        $stderr.puts "Perfect! Now add these two lines to your $HOME/.uservoice.rc:"
+        $stderr.puts "Perfect! Now add these two lines to your $HOME/.uservoicerc:"
       else
         $stderr.puts "Perfect! Wrote the tokens to stdout."
       end
@@ -76,7 +76,7 @@ rescue UserVoice::Unauthorized => e
       exit 500
     end
   else
-    puts e.to_s
+    puts e
     exit 403
   end
 rescue Errno::ENOENT, InvalidConfig, TypeError
