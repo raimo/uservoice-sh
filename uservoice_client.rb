@@ -8,7 +8,7 @@ InvalidConfig = Class.new(RuntimeError)
 begin
   config = YAML.load_file(File.expand_path('.uservoicerc', ENV['HOME']))
 
-  unless config && config['subdomain_name'] && config['api_key'] && config['api_secret']
+  unless config && config['subdomain_name'] && config['api_key']
     puts "You didn't include these in your .uservoicerc:"
     %w(subdomain_name api_key api_secret).each do |attr|
       puts "  #{attr} was not set"
@@ -27,7 +27,7 @@ begin
     if %w(get put post delete).include?(method.to_s)
       path = ARGV.shift
       raise "Bad path \"#{path}\"" unless path && path =~ /^\//
-      json_string = ARGV.join
+      json_string = ARGV.join(' ')
       access_token = client.login_with_access_token(config['access_token'], config['access_token_secret']) if config['access_token'] && config['access_token_secret']
       puts (access_token || client).request(method, path, (json_string.length > 0 ? JSON.parse(json_string) : '') ).to_json
     elsif %(get_collection).include?(method.to_s)
@@ -38,20 +38,23 @@ begin
       puts collection.each{}.to_json
       $stderr.puts "Total: #{collection.size}"
     elsif method.to_s == 'sso_token'
-      json_string = ARGV.join
+      json_string = ARGV.join(' ')
       puts UserVoice.generate_sso_token(config['subdomain_name'], config['sso_key'], (json_string.length > 0 ? JSON.parse(json_string) : ''))
     elsif method.to_s == 'sso_url'
-      json_string = ARGV.join
+      json_string = ARGV.join(' ')
       puts "http://#{config['subdomain_name']}.uservoice.com/login_success?sso=#{UserVoice.generate_sso_token(config['subdomain_name'], config['sso_key'], JSON.parse(json_string))}"
     else
       raise "Bad command \"#{method}\"."
     end
   end
-rescue JSON::ParserError, UserVoice::NotFound
-  $stderr.puts "Resource Not Found"
+rescue JSON::ParserError
+  $stderr.puts "Resource Not Found (got HTML 404)"
+  exit 404
+rescue UserVoice::NotFound => e
+  $stderr.puts "Resource Not Found: #{e.message}"
   exit 404
 rescue UserVoice::Unauthorized => e
-  if e.to_s =~ /No user/
+  if access_token.nil?
     $stderr.puts "You are making requests as no user. Request an access token."
     $stderr.puts "Type the email of the user whose access token you want (default: owner):"
     email = STDIN.gets.to_s.strip
